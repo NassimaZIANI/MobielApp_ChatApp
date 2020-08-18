@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "122329480556",
+    "firebase_url": "https://chatapp-a05bb.firebaseio.com",
+    "project_id": "chatapp-a05bb",
+    "storage_bucket": "chatapp-a05bb.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:122329480556:android:0c6dd5de23b71cbcf5c749",
+        "android_client_info": {
+          "package_name": "com.example.dell.chatapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "122329480556-ce06uhp1g0f78ocm9loaf0tkkcivomej.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.dell.chatapp",
+            "certificate_hash": "add0bcaaf76f6633995f24bc8356f16f8b586a33"
+          }
+        },
+        {
+          "client_id": "122329480556-ohvav1270gmpc9s0b2ug99l0adlevlv4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyANKgP6nn_bTVOUcY38ZLon0ZDu_6VU-QM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "122329480556-ohvav1270gmpc9s0b2ug99l0adlevlv4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
