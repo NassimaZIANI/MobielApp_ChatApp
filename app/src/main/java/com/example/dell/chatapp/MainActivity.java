@@ -2,6 +2,11 @@ package com.example.dell.chatapp;
 
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -10,6 +15,8 @@ import android.view.MenuItem;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.example.dell.chatapp.Fragment.ChatsFragment;
+import com.example.dell.chatapp.Fragment.UsersFragment;
 import com.example.dell.chatapp.Model.User;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -18,6 +25,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -83,6 +92,19 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+
+        TabLayout tabLayout = findViewById(R.id.tab_layout);
+        ViewPager viewPager = findViewById(R.id.view_pager);
+
+        ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
+
+        viewPagerAdapter.addFragment(new ChatsFragment(), "Chats");
+        viewPagerAdapter.addFragment(new UsersFragment(), "Utilisateurs");
+
+        viewPager.setAdapter(viewPagerAdapter);
+
+        tabLayout.setupWithViewPager(viewPager);
+
     }
 
     // specify the options menu for this activity (which is R.menu.menu)
@@ -107,5 +129,43 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return false;
+
+    }
+
+    class ViewPagerAdapter extends FragmentPagerAdapter {
+
+        private ArrayList<Fragment> fragments;
+        private ArrayList<String> titles;
+
+        // constructor
+        public ViewPagerAdapter(FragmentManager fm) {
+            super(fm);
+            this.fragments = new ArrayList<>();
+            this.titles = new ArrayList<>();
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            // Return the Fragment associated with a specified position
+            return fragments.get(position);
+        }
+
+        @Override
+        public int getCount() {
+            // Return the number of views available
+            return fragments.size();
+        }
+
+        public void addFragment(Fragment fragment, String title) {
+            fragments.add(fragment);
+            titles.add(title);
+        }
+
+        // may be called by the ViewPager to obtain a title string to describe the specified page
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return titles.get(position);
+        }
+
     }
 }
