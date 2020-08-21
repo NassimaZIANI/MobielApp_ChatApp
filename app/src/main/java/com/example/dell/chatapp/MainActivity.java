@@ -15,8 +15,8 @@ import android.view.MenuItem;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.example.dell.chatapp.Fragment.ChatsFragment;
-import com.example.dell.chatapp.Fragment.UsersFragment;
+import com.example.dell.chatapp.Fragments.ChatsFragment;
+import com.example.dell.chatapp.Fragments.UsersFragment;
 import com.example.dell.chatapp.Model.User;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;

@@ -1,4 +1,4 @@
-package com.example.dell.chatapp.Fragment;
+package com.example.dell.chatapp.Fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
