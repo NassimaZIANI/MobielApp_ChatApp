@@ -1,6 +1,7 @@
 package com.example.dell.chatapp.Adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.example.dell.chatapp.MessageActivity;
 import com.example.dell.chatapp.Model.User;
 import com.example.dell.chatapp.R;
 
@@ -44,7 +46,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
 
-        User user = mUsers.get(position);
+        final User user = mUsers.get(position);
         holder.username.setText(user.getUsername());
 
         if (user.getImgURL().equals("default")){
@@ -52,6 +54,17 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
         } else {
             Glide.with(mContext).load(user.getImgURL()).into(holder.profile_img);
         }
+
+        // when the user click on another user, redirect to their chatroom (MessageActivity)
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(mContext, MessageActivity.class);
+                // Add extended data to the intent
+                intent.putExtra("userid", user.getId());
+                mContext.startActivity(intent);
+            }
+        });
 
     }
 
