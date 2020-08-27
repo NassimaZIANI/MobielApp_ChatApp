@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.EditText;
@@ -12,6 +14,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.dell.chatapp.Adapter.MessageAdapter;
+import com.example.dell.chatapp.Model.Chat;
 import com.example.dell.chatapp.Model.User;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -21,7 +25,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -35,6 +41,11 @@ public class MessageActivity extends AppCompatActivity {
 
     ImageButton btn_send;
     EditText text_send;
+
+    MessageAdapter messageAdapter;
+    List<Chat> mchat;
+
+    RecyclerView recyclerView;
 
     Intent intent;
 
@@ -54,6 +65,13 @@ public class MessageActivity extends AppCompatActivity {
                 finish();
             }
         });
+
+        //
+        recyclerView = findViewById(R.id.recycler_view);
+        recyclerView.setHasFixedSize(true);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getApplicationContext());
+        linearLayoutManager.setStackFromEnd(true);
+        recyclerView.setLayoutManager(linearLayoutManager);
 
         profile_img = findViewById(R.id.profile_img);
         username = findViewById(R.id.username);
@@ -101,6 +119,8 @@ public class MessageActivity extends AppCompatActivity {
                     Glide.with(MessageActivity.this).load(user.getImgURL()).into(profile_img);
                 }
 
+                readMessage(fuser.getUid(), userid, user.getImgURL());
+
             }
 
             @Override
@@ -111,7 +131,7 @@ public class MessageActivity extends AppCompatActivity {
     }
 
     /**
-     * this method add the data related to the message (the sender's & receiver's id & the message)
+     * this method add the data related to the message (the sender's & receiver's id & the message) to the DB
      * @param sender : the sender of the message
      * @param receiver : the receiver of the message
      * @param message : the message sent
@@ -127,6 +147,54 @@ public class MessageActivity extends AppCompatActivity {
 
         reference.child("Chats").push().setValue(hashMap);
 
+    }
+
+    /**
+     * this method fetch the messages exchanged between the sender & receiver from the DB to show them on the UI
+     * @param myid : the current user
+     * @param userid : the user we chatting with
+     * @param imageURL : The userid's profile image
+     */
+    private void readMessage(final String myid, final String userid, final String imageURL) {
+        mchat = new ArrayList<>();
+
+        // get the instance of the 'Chats'
+        reference = FirebaseDatabase.getInstance().getReference("Chats");
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                mchat.clear();
+
+                // for each chat
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+
+                    // put the chat fetched on the Chat class
+                    Chat chat = snapshot.getValue(Chat.class);
+
+                    // check if the receiver or the sender are either of the current user or the user we chatting with
+                    if (chat.getReceiver().equals(myid) && chat.getSender().equals(userid) ||
+                            chat.getReceiver().equals(userid) && chat.getSender().equals(myid)) {
+
+                        // add the messages exchanged to the list
+                        mchat.add(chat);
+
+                    }
+
+                    // create an instance of the MessageAdapter with the list of chats passed as an argument
+                    messageAdapter = new MessageAdapter(MessageActivity.this, mchat, imageURL);
+                    // display the messageAdapter in the recyclerView
+                    recyclerView.setAdapter(messageAdapter);
+
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
 }
