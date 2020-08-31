@@ -152,7 +152,7 @@ public class ChatsFragment extends Fragment {
                 }
 
                 // create an instance of the UserAdapter with the list of users we communicated with passed as an argument
-                userAdapter = new UserAdapter(getContext(), mUsers);
+                userAdapter = new UserAdapter(getContext(), mUsers, true);
                 // display the userAdapter in the recyclerView
                 recyclerView.setAdapter(userAdapter);
 

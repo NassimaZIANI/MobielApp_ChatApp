@@ -25,11 +25,13 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
     // It allows access to application-specific resources and classes, as well as up-calls for application-level operations such as launching activities, broadcasting and receiving intents, etc.
     private Context mContext;
     private List<User> mUsers;
+    private boolean ischat;
 
     // constructor
-    public UserAdapter(Context mContext, List<User> mUsers) {
+    public UserAdapter(Context mContext, List<User> mUsers, boolean ischat) {
         this.mContext = mContext;
         this.mUsers = mUsers;
+        this.ischat = ischat;
     }
 
     // Called when RecyclerView needs a new RecyclerView.ViewHolder of the given type to represent an item.
@@ -55,6 +57,26 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
             Glide.with(mContext).load(user.getImgURL()).into(holder.profile_img);
         }
 
+        // check if ischat is true
+        if (ischat) {
+
+            // check if the user is online ==> display the online/offline icon
+            if (user.getStatus().equals("online")) {
+                holder.img_on.setVisibility(View.VISIBLE);
+                holder.img_off.setVisibility(View.GONE);
+            } else {
+                holder.img_on.setVisibility(View.GONE);
+                holder.img_off.setVisibility(View.VISIBLE);
+            }
+
+        } else {
+
+            // don't diplay anything if ischat is false
+            holder.img_on.setVisibility(View.GONE);
+            holder.img_off.setVisibility(View.GONE);
+
+        }
+
         // when the user click on another user, redirect to their chatroom (MessageActivity)
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -77,6 +99,8 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
 
         public TextView username;
         public ImageView profile_img;
+        private ImageView img_on;
+        private ImageView img_off;
 
         // constructor
         public ViewHolder(View itemView) {
@@ -84,6 +108,8 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
 
             username = itemView.findViewById(R.id.username);
             profile_img = itemView.findViewById(R.id.profile_img);
+            img_on = itemView.findViewById(R.id.img_on);
+            img_off = itemView.findViewById(R.id.img_off);
 
         }
     }

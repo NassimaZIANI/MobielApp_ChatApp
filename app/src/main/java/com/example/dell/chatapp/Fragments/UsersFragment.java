@@ -83,7 +83,7 @@ public class UsersFragment extends Fragment {
                 }
 
                 // create an instance of the UserAdapter with the list of users passed as an argument
-                userAdapter = new UserAdapter(getContext(), mUsers);
+                userAdapter = new UserAdapter(getContext(), mUsers, false);
                 //display the userAdapter in the recyclerView
                 recyclerView.setAdapter(userAdapter);
 
