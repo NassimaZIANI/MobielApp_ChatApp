@@ -83,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
 
                     // Glide is an Image Loader Library
                     // it loads the img it gets from the DB into the profile_img
-                    Glide.with(MainActivity.this).load(user.getImgURL()).into(profile_img);
+                    Glide.with(getApplicationContext()).load(user.getImgURL()).into(profile_img);
 
                 }
 

@@ -49,6 +49,9 @@ public class MessageActivity extends AppCompatActivity {
 
     Intent intent;
 
+    // used to receive events about data changes at a location
+    ValueEventListener seenListener;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -116,7 +119,7 @@ public class MessageActivity extends AppCompatActivity {
                 if (user.getImgURL().equals("default")){
                     profile_img.setImageResource(R.mipmap.ic_launcher);
                 } else {
-                    Glide.with(MessageActivity.this).load(user.getImgURL()).into(profile_img);
+                    Glide.with(getApplicationContext()).load(user.getImgURL()).into(profile_img);
                 }
 
                 readMessage(fuser.getUid(), userid, user.getImgURL());
@@ -128,6 +131,45 @@ public class MessageActivity extends AppCompatActivity {
 
             }
         });
+
+        seenMessage(userid);
+
+    }
+
+    /**
+     * this method allows to update the DB, put the message to seen when the current user open the chat
+     * @param userid : the id of the user we chatting with
+     */
+    private void seenMessage(final String userid) {
+
+        reference = FirebaseDatabase.getInstance().getReference("Chats");
+        seenListener = reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+
+                    Chat chat = snapshot.getValue(Chat.class);
+
+                    // check if the receiver (current user) opened the chat => update the inseen value in the DB to true
+                    if (chat.getReceiver().equals(fuser.getUid()) && chat.getSender().equals(userid)) {
+
+                        HashMap<String, Object> hashMap = new HashMap<>();
+                        hashMap.put("isseen", true);
+                        snapshot.getRef().updateChildren(hashMap);
+
+                    }
+
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
     }
 
     /**
@@ -144,6 +186,7 @@ public class MessageActivity extends AppCompatActivity {
         hashMap.put("sender", sender);
         hashMap.put("receiver", receiver);
         hashMap.put("message", message);
+        hashMap.put("isseen", false);
 
         reference.child("Chats").push().setValue(hashMap);
 
@@ -210,15 +253,21 @@ public class MessageActivity extends AppCompatActivity {
         reference.updateChildren(hashMap);
     }
 
+    // add events when the activity is on resume
     @Override
     protected void onResume() {
         super.onResume();
+        // put the status to online
         status("online");
     }
 
+    // add events when the activity is on pause
     @Override
     protected void onPause() {
         super.onPause();
+        // remove the eventListener
+        reference.removeEventListener(seenListener);
+        // put the status to offline
         status("offline");
     }
 

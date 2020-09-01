@@ -78,6 +78,20 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
             Glide.with(mContext).load(imageURL).into(holder.profile_img);
         }
 
+        // check for the last message
+        if (position == mChat.size()-1) {
+
+            // check if the last message is seen
+            if (chat.isIsseen()) {
+                holder.txt_seen.setText("Vu");
+            } else {
+                holder.txt_seen.setText("Envoyé");
+            }
+
+        } else {
+            holder.txt_seen.setVisibility(View.GONE);
+        }
+
     }
 
     @Override
@@ -89,6 +103,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
 
         public TextView show_message;
         public ImageView profile_img;
+        public TextView txt_seen;
 
         // constructor
         public ViewHolder(View itemView) {
@@ -96,6 +111,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
 
             show_message = itemView.findViewById(R.id.show_message);
             profile_img = itemView.findViewById(R.id.profile_img);
+            txt_seen = itemView.findViewById(R.id.txt_seen);
 
         }
     }
