@@ -10,13 +10,15 @@ public class User {
     private String username;
     private String imgURL;
     private String status;
+    private String search;
 
     // constructor
-    public User(String id, String username, String imgURL, String status) {
+    public User(String id, String username, String imgURL, String status, String search) {
         this.id = id;
         this.username = username;
         this.imgURL = imgURL;
         this.status = status;
+        this.search = search;
     }
 
     public User() {
@@ -54,5 +56,13 @@ public class User {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getSearch() {
+        return search;
+    }
+
+    public void setSearch(String search) {
+        this.search = search;
     }
 }

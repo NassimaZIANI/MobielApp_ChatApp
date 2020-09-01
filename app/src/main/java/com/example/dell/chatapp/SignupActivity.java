@@ -110,6 +110,7 @@ public class SignupActivity extends AppCompatActivity {
                             hashMap.put("username", username);
                             hashMap.put("imgURL", "default");
                             hashMap.put("status", "offline");
+                            hashMap.put("search", username.toLowerCase());
 
                             // set the hashMap in the DB
                             reference.setValue(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
