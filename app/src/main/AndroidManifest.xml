@@ -28,7 +28,9 @@
         <activity
             android:name=".LoginActivity"
             android:parentActivityName=".StartActivity" />
-        <activity android:name=".MessageActivity"></activity>
+        <activity android:name=".MessageActivity" />
+        <activity android:name=".ResetPasswordActivity"
+            android:parentActivityName=".LoginActivity"></activity>
     </application>
 
 </manifest>
