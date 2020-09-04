@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 
 import com.example.dell.chatapp.Adapter.UserAdapter;
 import com.example.dell.chatapp.Model.Chat;
+import com.example.dell.chatapp.Model.Chatlist;
 import com.example.dell.chatapp.Model.User;
 import com.example.dell.chatapp.R;
 import com.google.firebase.auth.FirebaseAuth;
@@ -34,7 +35,7 @@ public class ChatsFragment extends Fragment {
     FirebaseUser fuser;
     DatabaseReference reference;
 
-    private List<String> usersList;
+    private List<Chatlist> usersList;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -51,39 +52,23 @@ public class ChatsFragment extends Fragment {
 
         usersList = new ArrayList<>();
 
-        // get an instance of the Chats from DB
-        reference = FirebaseDatabase.getInstance().getReference("Chats");
+        // get an instance of chatlist from DB (the users that communicated with the current user)
+        reference = FirebaseDatabase.getInstance().getReference("chatlist").child(fuser.getUid());
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 usersList.clear();
 
-                // for each snapshot of the Chats
+                // for each user that the current user communicated with, add his id to the usersList
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
 
-                    // add the chat to the Chat class
-                    Chat chat = snapshot.getValue(Chat.class);
+                    // add the chatlist to usersList
+                    Chatlist chatlist = snapshot.getValue(Chatlist.class);
+                    usersList.add(chatlist);
 
-                    // check if the sender of the message is the current user
-                    if (chat.getSender().equals(fuser.getUid())) {
-
-                        // if he is the sender, add the receiver of that message to the usersList
-                        usersList.add(chat.getReceiver());
-
-                    }
-
-                    // check if the current user is a reciever of a message
-                    if (chat.getReceiver().equals(fuser.getUid())) {
-
-                        // is he is the receiver, add the sender of that message to the usersList
-                        usersList.add(chat.getSender());
-
-                    }
                 }
 
-                // call the readChats method to display the users we communicated with
-                readChats();
-
+                chatList();
             }
 
             @Override
@@ -99,59 +84,36 @@ public class ChatsFragment extends Fragment {
     /**
      * this method display the users we communicated with in the Chats Fragment
      */
-    private void readChats(){
+    private void chatList() {
+
         mUsers = new ArrayList<>();
 
-        // get an instance of the Users from DB
+        // get an instance of Users
         reference = FirebaseDatabase.getInstance().getReference("Users");
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                mUsers.clear();
 
-                // for each snapshot of the Users
+                mUsers.clear();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
 
-                    // add the user to the User class
                     User user = snapshot.getValue(User.class);
 
-                    // display 1 user from chats
-                    // for each user we communicated with
-                    for (String id : usersList) {
+                    // for each entry of usersList
+                    for (Chatlist chatlist : usersList) {
 
-                        // check if the id fetched from the DB equals the id in the usersList
-                        if (user.getId().equals(id)) {
+                        // check if the user id fetched in the users equals the one in the usersList
+                        if (user.getId().equals(chatlist.getId())) {
 
-                            // check is mUsers isnt' empty
-                            if (mUsers.size() != 0) {
-
-                                // for each user in the mUsers list
-                                for (User user1 : mUsers) {
-
-                                    // check if the user fetched from the DB don't already exist in the mUsers
-                                    if (!user.getId().equals(user1.getId())) {
-
-                                        // add the user's info into the mUsers list
-                                        mUsers.add(user);
-
-                                    }
-
-                                }
-
-                            } else {
-
-                                // add the user's info in the mUsers list
-                                mUsers.add(user);
-
-                            }
-
+                            // add the user to mUsers list
+                            mUsers.add(user);
                         }
 
                     }
 
                 }
 
-                // create an instance of the UserAdapter with the list of users we communicated with passed as an argument
+                // create an instance of the UserAdapter with the list of users passed as an argument
                 userAdapter = new UserAdapter(getContext(), mUsers, true);
                 // display the userAdapter in the recyclerView
                 recyclerView.setAdapter(userAdapter);
@@ -163,6 +125,7 @@ public class ChatsFragment extends Fragment {
 
             }
         });
+
     }
 
 }

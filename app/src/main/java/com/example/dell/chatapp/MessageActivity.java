@@ -178,7 +178,7 @@ public class MessageActivity extends AppCompatActivity {
      * @param receiver : the receiver of the message
      * @param message : the message sent
      */
-    private void sendMessage(String sender, String receiver, String message){
+    private void sendMessage(String sender, final String receiver, String message){
 
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
 
@@ -189,6 +189,33 @@ public class MessageActivity extends AppCompatActivity {
         hashMap.put("isseen", false);
 
         reference.child("Chats").push().setValue(hashMap);
+
+        // add user to chat fragment
+        // add the sender as a child & the receiver as a child of the sender
+        final DatabaseReference chatRef = FirebaseDatabase.getInstance().getReference("chatlist")
+                .child(sender)
+                .child(receiver);
+
+        // when a message is sent
+        chatRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                // check if the sender & receiver never exchanged messages
+                if (!dataSnapshot.exists()) {
+
+                    // if it is the first time they exchange messages => add the id of the receiver to the DB
+                    chatRef.child("id").setValue(receiver);
+
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
 
     }
 
